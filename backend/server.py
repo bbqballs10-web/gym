@@ -53,10 +53,16 @@ if SHIPPO_API_KEY:
     shippo_client = shippo.Shippo(api_key_header=SHIPPO_API_KEY)
 
 # n8n Webhook configuration
-N8N_WEBHOOK_URL = os.environ.get('N8N_WEBHOOK_URL', 'https://raze11.app.n8n.cloud/webhook/raze-account-signup')
-N8N_WAITLIST_WEBHOOK_URL = os.environ.get('N8N_WAITLIST_WEBHOOK_URL', 'https://raze11.app.n8n.cloud/webhook/raze-waitlist')
+N8N_WEBHOOK_URL = os.environ.get('WEBHOOK_ACCOUNT_SIGNUP', 'https://raze11.app.n8n.cloud/webhook/raze-account-signup')
+N8N_WAITLIST_WEBHOOK_URL = os.environ.get('WEBHOOK_WAITLIST', 'https://raze11.app.n8n.cloud/webhook/raze-waitlist')
 N8N_ORDER_WEBHOOK_URL = os.environ.get('N8N_ORDER_WEBHOOK_URL', 'https://raze11.app.n8n.cloud/webhook/raze-order-confirmation')
 N8N_BULK_EMAIL_WEBHOOK_URL = os.environ.get('N8N_BULK_EMAIL_WEBHOOK_URL', 'https://raze11.app.n8n.cloud/webhook/raze-bulk-email')
+N8N_GIVEAWAY_WEBHOOK_URL = os.environ.get('WEBHOOK_GIVEAWAY', 'https://raze11.app.n8n.cloud/webhook/raze-giveaway-entry')
+
+# Abandoned cart webhook URLs
+WEBHOOK_ABANDONED_CART_1 = os.environ.get('WEBHOOK_ABANDONED_CART_1', 'https://raze11.app.n8n.cloud/webhook/raze-abandoned-cart-1')
+WEBHOOK_ABANDONED_CART_2 = os.environ.get('WEBHOOK_ABANDONED_CART_2', 'https://raze11.app.n8n.cloud/webhook/raze-abandoned-cart-2')
+WEBHOOK_ABANDONED_CART_3 = os.environ.get('WEBHOOK_ABANDONED_CART_3', 'https://raze11.app.n8n.cloud/webhook/raze-abandoned-cart-3')
 
 # Default sender address for RAZE (US address for Shippo test mode)
 # Update this to your actual warehouse address in production
