@@ -10314,29 +10314,14 @@ body {
 }
 
 @media (max-width: 768px) {
-  .waitlist-banner-placeholder {
-    transition: height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  .waitlist-banner-wrapper {
+    top: 56px; /* Mobile header height */
   }
 
   .waitlist-banner {
-    position: relative;
-    top: auto;
     padding: 8px 12px;
-    margin-top: 0;
-    margin-bottom: 0;
-    overflow: visible;
     border-top: 1px solid rgba(0, 217, 255, 0.3);
     box-shadow: 0 2px 12px rgba(0, 217, 255, 0.1);
-    width: 100%;
-    z-index: 998;
-  }
-  
-  .waitlist-banner.is-sticky {
-    position: fixed;
-    top: 56px;
-    left: 0;
-    right: 0;
-    animation: slideInBanner 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
   
   .banner-content {
