@@ -10325,14 +10325,14 @@ body {
 }
 
 @media (max-width: 768px) {
-  .waitlist-banner-wrapper {
-    top: 56px; /* Mobile header height */
-  }
-
   .waitlist-banner {
     padding: 8px 12px;
     border-top: 1px solid rgba(0, 217, 255, 0.3);
     box-shadow: 0 2px 12px rgba(0, 217, 255, 0.1);
+  }
+  
+  .waitlist-banner.is-sticky {
+    top: 56px; /* Mobile header height */
   }
   
   .banner-content {
