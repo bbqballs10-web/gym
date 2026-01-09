@@ -10100,56 +10100,25 @@ body {
 }
 
 /* ========================================
-   WAITLIST BANNER - Smooth Sticky with IntersectionObserver
+   WAITLIST BANNER
    ======================================== */
-
-.waitlist-banner-container {
-  position: relative;
-  width: 100%;
-}
-
-/* Invisible sentinel - triggers sticky when scrolled past header */
-.waitlist-sentinel {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 1px;
-  pointer-events: none;
-}
-
-/* Placeholder maintains document flow when banner is fixed */
-.waitlist-banner-placeholder {
-  transition: height 0.15s ease-out;
-}
-
 .waitlist-banner {
   background: linear-gradient(90deg, rgba(0, 217, 255, 0.08) 0%, rgba(168, 85, 247, 0.06) 50%, rgba(0, 217, 255, 0.08) 100%);
   border-top: 1px solid rgba(0, 217, 255, 0.3);
   border-bottom: 1px solid rgba(0, 217, 255, 0.4);
   padding: 12px 20px;
+  position: sticky;
+  top: 72px;
+  z-index: 998;
   box-shadow: 0 4px 24px rgba(0, 217, 255, 0.1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  width: 100%;
 }
 
 .waitlist-banner:hover {
   background: linear-gradient(90deg, rgba(0, 217, 255, 0.12) 0%, rgba(168, 85, 247, 0.08) 50%, rgba(0, 217, 255, 0.12) 100%);
   box-shadow: 0 6px 32px rgba(0, 217, 255, 0.2);
-}
-
-/* When sticky - fixed position below header */
-.waitlist-banner.is-sticky {
-  position: fixed;
-  top: 72px;
-  left: 0;
-  right: 0;
-  z-index: 999;
-  background: linear-gradient(90deg, rgba(0, 217, 255, 0.15) 0%, rgba(168, 85, 247, 0.12) 50%, rgba(0, 217, 255, 0.15) 100%);
-  background-color: rgba(20, 20, 25, 0.95);
-  box-shadow: 0 4px 20px rgba(0, 217, 255, 0.25), 0 2px 8px rgba(0, 0, 0, 0.4);
-  border-bottom: 1px solid rgba(0, 217, 255, 0.5);
 }
 
 .banner-content {
