@@ -6,10 +6,32 @@ const WaitlistBanner = ({ onClick }) => {
   const [spotsRemaining, setSpotsRemaining] = useState(null);
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
   const [showFixed, setShowFixed] = useState(false);
+  const [isVisible, setIsVisible] = useState(false); // Hidden until first interaction
   const bannerRef = useRef(null);
 
   // Next drop date - February 2, 2026
   const targetDate = new Date('2026-02-02T00:00:00');
+
+  // Show banner after first click, scroll, or touch
+  useEffect(() => {
+    const handleFirstInteraction = () => {
+      setIsVisible(true);
+      // Remove all listeners after first interaction
+      window.removeEventListener('scroll', handleFirstInteraction);
+      window.removeEventListener('click', handleFirstInteraction);
+      window.removeEventListener('touchstart', handleFirstInteraction);
+    };
+
+    window.addEventListener('scroll', handleFirstInteraction, { passive: true });
+    window.addEventListener('click', handleFirstInteraction, { passive: true });
+    window.addEventListener('touchstart', handleFirstInteraction, { passive: true });
+
+    return () => {
+      window.removeEventListener('scroll', handleFirstInteraction);
+      window.removeEventListener('click', handleFirstInteraction);
+      window.removeEventListener('touchstart', handleFirstInteraction);
+    };
+  }, []);
 
   useEffect(() => {
     const spots = calculateSpotsRemaining();
@@ -89,7 +111,7 @@ const WaitlistBanner = ({ onClick }) => {
       {/* Inline banner - always in document flow */}
       <div 
         ref={bannerRef}
-        className={`waitlist-banner waitlist-banner-inline ${showFixed ? 'is-hidden' : ''}`}
+        className={`waitlist-banner waitlist-banner-inline ${showFixed ? 'is-hidden' : ''} ${isVisible ? 'fade-in' : 'initially-hidden'}`}
         onClick={onClick} 
         style={{ cursor: onClick ? 'pointer' : 'default' }}
       >
@@ -98,7 +120,7 @@ const WaitlistBanner = ({ onClick }) => {
       
       {/* Fixed banner - only visible when scrolled past */}
       <div 
-        className={`waitlist-banner waitlist-banner-fixed ${showFixed ? 'is-visible' : ''}`}
+        className={`waitlist-banner waitlist-banner-fixed ${showFixed && isVisible ? 'is-visible' : ''}`}
         onClick={onClick} 
         style={{ cursor: onClick ? 'pointer' : 'default' }}
       >
