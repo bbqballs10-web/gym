@@ -902,8 +902,8 @@ body {
 @media (min-width: 1024px) {
   .hero-section {
     min-height: calc(100vh - 72px); /* Full viewport minus header */
-    height: calc(100vh - 72px);
-    padding-bottom: 0;
+    height: auto; /* Allow content to determine height on smaller screens */
+    padding-bottom: 40px;
   }
   
   .hero-inner {
@@ -911,6 +911,14 @@ body {
     grid-template-columns: 1fr 1fr;
     align-items: center;
     gap: clamp(32px, 4vw, 96px);
+  }
+}
+
+/* Larger desktop screens - lock to viewport */
+@media (min-width: 1024px) and (min-height: 800px) {
+  .hero-section {
+    height: calc(100vh - 72px);
+    padding-bottom: 0;
   }
 }
 
