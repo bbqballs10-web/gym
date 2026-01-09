@@ -10139,8 +10139,9 @@ body {
   top: 72px;
   left: 0;
   right: 0;
-  z-index: 998;
-  background: linear-gradient(90deg, rgba(0, 217, 255, 0.12) 0%, rgba(168, 85, 247, 0.08) 50%, rgba(0, 217, 255, 0.12) 100%);
+  z-index: 999;
+  background: linear-gradient(90deg, rgba(0, 217, 255, 0.15) 0%, rgba(168, 85, 247, 0.12) 50%, rgba(0, 217, 255, 0.15) 100%);
+  background-color: rgba(20, 20, 25, 0.95);
   box-shadow: 0 4px 20px rgba(0, 217, 255, 0.25), 0 2px 8px rgba(0, 0, 0, 0.4);
   border-bottom: 1px solid rgba(0, 217, 255, 0.5);
 }
