@@ -5,8 +5,8 @@ import { calculateSpotsRemaining } from '../utils/waitlistSpots';
 const WaitlistBanner = ({ onClick }) => {
   const [spotsRemaining, setSpotsRemaining] = useState(null);
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
-  const [scrolledPast, setScrolledPast] = useState(false);
-  const sentinelRef = useRef(null);
+  const [showFixed, setShowFixed] = useState(false);
+  const bannerRef = useRef(null);
 
   // Next drop date - February 2, 2026
   const targetDate = new Date('2026-02-02T00:00:00');
@@ -41,62 +41,70 @@ const WaitlistBanner = ({ onClick }) => {
     };
   }, []);
 
-  // Use IntersectionObserver for smooth detection
+  // Track when inline banner scrolls past header
   useEffect(() => {
-    if (!sentinelRef.current) return;
+    const handleScroll = () => {
+      if (!bannerRef.current) return;
+      
+      const headerHeight = window.innerWidth <= 768 ? 56 : 72;
+      const bannerRect = bannerRef.current.getBoundingClientRect();
+      
+      // Show fixed banner when inline banner top reaches header bottom
+      setShowFixed(bannerRect.top <= headerHeight);
+    };
 
-    const headerHeight = window.innerWidth <= 768 ? 56 : 72;
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
     
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        // When sentinel is not visible (scrolled past), banner should be fixed
-        setScrolledPast(!entry.isIntersecting);
-      },
-      {
-        rootMargin: `-${headerHeight}px 0px 0px 0px`,
-        threshold: 0
-      }
-    );
-
-    observer.observe(sentinelRef.current);
-    return () => observer.disconnect();
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const formatTime = (num) => String(num).padStart(2, '0');
 
-  return (
-    <div className="waitlist-banner-wrapper">
-      {/* Sentinel element - tracks when banner position is reached */}
-      <div ref={sentinelRef} className="waitlist-sentinel" />
+  const BannerContent = () => (
+    <div className="banner-content">
+      <div className="banner-left">
+        <Flame size={20} className="banner-icon" />
+        <span className="sold-out-text">FIRST DROP SOLD OUT</span>
+      </div>
       
-      {/* The actual banner */}
+      <div className="banner-center">
+        <Clock size={16} />
+        <span className="countdown-inline">
+          Next drop: {formatTime(timeLeft.days)}d {formatTime(timeLeft.hours)}h {formatTime(timeLeft.minutes)}m {formatTime(timeLeft.seconds)}s
+        </span>
+      </div>
+      
+      <div className="banner-right">
+        <Users size={16} />
+        <span className="waitlist-count-inline">
+          Only <strong>{spotsRemaining}</strong> spots left
+        </span>
+      </div>
+    </div>
+  );
+
+  return (
+    <>
+      {/* Inline banner - always in document flow */}
       <div 
-        className={`waitlist-banner ${scrolledPast ? 'is-fixed' : ''}`}
+        ref={bannerRef}
+        className={`waitlist-banner waitlist-banner-inline ${showFixed ? 'is-hidden' : ''}`}
         onClick={onClick} 
         style={{ cursor: onClick ? 'pointer' : 'default' }}
       >
-        <div className="banner-content">
-          <div className="banner-left">
-            <Flame size={20} className="banner-icon" />
-            <span className="sold-out-text">FIRST DROP SOLD OUT</span>
-          </div>
-          
-          <div className="banner-center">
-            <Clock size={16} />
-            <span className="countdown-inline">
-              Next drop: {formatTime(timeLeft.days)}d {formatTime(timeLeft.hours)}h {formatTime(timeLeft.minutes)}m {formatTime(timeLeft.seconds)}s
-            </span>
-          </div>
-          
-          <div className="banner-right">
-            <Users size={16} />
-            <span className="waitlist-count-inline">
-              Only <strong>{spotsRemaining}</strong> spots left
-            </span>
-          </div>
-        </div>
+        <BannerContent />
       </div>
-    </div>
+      
+      {/* Fixed banner - only visible when scrolled past */}
+      <div 
+        className={`waitlist-banner waitlist-banner-fixed ${showFixed ? 'is-visible' : ''}`}
+        onClick={onClick} 
+        style={{ cursor: onClick ? 'pointer' : 'default' }}
+      >
+        <BannerContent />
+      </div>
+    </>
   );
 };
 
