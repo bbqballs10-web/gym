@@ -10348,6 +10348,10 @@ body {
     top: 56px; /* Mobile header height */
   }
   
+  .waitlist-banner-placeholder {
+    transition: height 0.15s ease-out;
+  }
+  
   .banner-content {
     gap: 8px;
     justify-content: center;
