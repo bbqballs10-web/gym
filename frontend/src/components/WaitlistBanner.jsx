@@ -86,7 +86,16 @@ const WaitlistBanner = ({ onClick }) => {
 
   // Handle sticky based on scroll position vs threshold
   const handleScroll = useCallback(() => {
-    if (stickyThreshold === 0) return;
+    // If threshold not calculated yet, try to calculate it now
+    if (stickyThreshold === 0 && wrapperRef.current) {
+      const headerHeight = window.innerWidth <= 768 ? 56 : 72;
+      const wrapperTop = wrapperRef.current.getBoundingClientRect().top + window.scrollY;
+      const newThreshold = wrapperTop - headerHeight;
+      if (newThreshold > 0) {
+        setStickyThreshold(newThreshold);
+      }
+      return;
+    }
     
     // Simple check: if we've scrolled past the threshold, stick
     const shouldStick = window.scrollY >= stickyThreshold;
