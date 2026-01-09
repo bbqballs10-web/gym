@@ -898,11 +898,11 @@ body {
   padding: 0 clamp(16px, 4vw, 80px);
 }
 
-/* DESKTOP: 2-column grid */
+/* DESKTOP: 2-column grid, full viewport height */
 @media (min-width: 1024px) {
   .hero-section {
-    height: auto !important;
-    min-height: auto !important;
+    min-height: calc(100vh - 72px); /* Full viewport minus header */
+    height: calc(100vh - 72px);
     padding-bottom: 0;
   }
   
