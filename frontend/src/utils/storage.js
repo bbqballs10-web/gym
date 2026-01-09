@@ -62,7 +62,7 @@ export const popup = {
 
 export const giveawayPopup = {
   COOLDOWN_DAYS: 14,
-  TRIGGER_DELAY_MS: 4000, // 4 seconds
+  TRIGGER_DELAY_MS: 5000, // 5 seconds
 
   shouldShow: () => {
     const lastSeen = localStorage.getItem(STORAGE_KEYS.GIVEAWAY_LAST_SEEN);
