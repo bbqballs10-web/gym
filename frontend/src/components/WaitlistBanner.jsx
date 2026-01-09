@@ -70,16 +70,8 @@ const WaitlistBanner = ({ onClick }) => {
         requestAnimationFrame(() => {
           // Access ref directly instead of through closure
           if (stickyPointRef.current !== null) {
-            const scrollY = window.scrollY;
-            const stickyPoint = stickyPointRef.current;
-            const shouldStick = scrollY >= stickyPoint;
-            
-            // Debug log
-            console.log(`Scroll: ${scrollY}, StickyPoint: ${stickyPoint}, ShouldStick: ${shouldStick}`);
-            
+            const shouldStick = window.scrollY >= stickyPointRef.current;
             setIsSticky(shouldStick);
-          } else {
-            console.log('stickyPointRef is null');
           }
           ticking = false;
         });
