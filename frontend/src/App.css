@@ -2200,7 +2200,7 @@ body {
 /* Title - consistent font, closer to logo */
 .giveaway-title {
   font-family: inherit;
-  font-size: 1.05rem;
+  font-size: 1.1rem;
   font-weight: 700;
   color: var(--text-primary);
   margin: 0 auto 0 auto;
@@ -2212,14 +2212,16 @@ body {
   letter-spacing: 0.02em;
 }
 
-/* Choice line - consistent font, tighter spacing */
+/* Choice line - same font as title */
 .giveaway-choice-line {
   font-family: inherit;
-  font-size: 0.95rem;
+  font-size: 1.1rem;
   font-weight: 700;
   margin: 2px auto 14px auto;
   text-align: center;
   line-height: 1.3;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
 }
 
 .giveaway-title .giveaway-highlight,
