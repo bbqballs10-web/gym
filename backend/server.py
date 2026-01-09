@@ -469,20 +469,16 @@ async def send_n8n_signup_webhook(email: str, name: str, discount_code: str, sig
 async def send_n8n_giveaway_webhook(email: str):
     """Send webhook to n8n when someone enters the giveaway"""
     try:
-        # Use a different webhook URL for giveaway entries
-        giveaway_webhook_url = os.environ.get('N8N_GIVEAWAY_WEBHOOK_URL', 'https://raze11.app.n8n.cloud/webhook/raze-giveaway-entry')
-        
-        payload = {
-            "email": email,
-            "event_type": "giveaway_entry",
-            "timestamp": datetime.now(timezone.utc).isoformat()
-        }
-        
         async with httpx.AsyncClient() as client:
+            payload = {
+                "email": email,
+                "event_type": "giveaway_entry",
+                "timestamp": datetime.now(timezone.utc).isoformat()
+            }
+            
             response = await client.post(
-                giveaway_webhook_url,
+                N8N_GIVEAWAY_WEBHOOK_URL,
                 json=payload,
-                headers={"Content-Type": "application/json"},
                 timeout=10.0
             )
             
