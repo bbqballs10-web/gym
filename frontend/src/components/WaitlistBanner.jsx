@@ -5,9 +5,8 @@ import { calculateSpotsRemaining } from '../utils/waitlistSpots';
 const WaitlistBanner = ({ onClick }) => {
   const [spotsRemaining, setSpotsRemaining] = useState(null);
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
-  const [isFixed, setIsFixed] = useState(false);
-  const bannerRef = useRef(null);
-  const placeholderRef = useRef(null);
+  const [scrolledPast, setScrolledPast] = useState(false);
+  const sentinelRef = useRef(null);
 
   // Next drop date - February 2, 2026
   const targetDate = new Date('2026-02-02T00:00:00');
@@ -16,7 +15,6 @@ const WaitlistBanner = ({ onClick }) => {
     const spots = calculateSpotsRemaining();
     setSpotsRemaining(spots);
 
-    // Countdown timer
     const updateCountdown = () => {
       const now = new Date();
       const difference = targetDate - now;
@@ -33,8 +31,6 @@ const WaitlistBanner = ({ onClick }) => {
 
     updateCountdown();
     const timer = setInterval(updateCountdown, 1000);
-
-    // Slowly decrease spots remaining for urgency
     const spotsTimer = setInterval(() => {
       setSpotsRemaining(prev => Math.max(1, prev - Math.floor(Math.random() * 2)));
     }, 60000);
@@ -45,39 +41,37 @@ const WaitlistBanner = ({ onClick }) => {
     };
   }, []);
 
-  // Handle scroll to switch from sticky to fixed
+  // Use IntersectionObserver for smooth detection
   useEffect(() => {
-    const handleScroll = () => {
-      if (!placeholderRef.current) return;
-      
-      const headerHeight = window.innerWidth <= 768 ? 56 : 72;
-      const placeholderRect = placeholderRef.current.getBoundingClientRect();
-      
-      // When placeholder top reaches header bottom, switch to fixed
-      setIsFixed(placeholderRect.top <= headerHeight);
-    };
+    if (!sentinelRef.current) return;
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll();
+    const headerHeight = window.innerWidth <= 768 ? 56 : 72;
     
-    return () => window.removeEventListener('scroll', handleScroll);
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        // When sentinel is not visible (scrolled past), banner should be fixed
+        setScrolledPast(!entry.isIntersecting);
+      },
+      {
+        rootMargin: `-${headerHeight}px 0px 0px 0px`,
+        threshold: 0
+      }
+    );
+
+    observer.observe(sentinelRef.current);
+    return () => observer.disconnect();
   }, []);
 
   const formatTime = (num) => String(num).padStart(2, '0');
 
-  const bannerHeight = bannerRef.current?.offsetHeight || 48;
-
   return (
-    <>
-      {/* Placeholder to maintain layout space */}
-      <div 
-        ref={placeholderRef}
-        style={{ height: isFixed ? bannerHeight : 0, marginTop: isFixed ? 0 : '-40px' }}
-      />
+    <div className="waitlist-banner-wrapper">
+      {/* Sentinel element - tracks when banner position is reached */}
+      <div ref={sentinelRef} className="waitlist-sentinel" />
       
+      {/* The actual banner */}
       <div 
-        ref={bannerRef}
-        className={`waitlist-banner ${isFixed ? 'is-fixed' : ''}`}
+        className={`waitlist-banner ${scrolledPast ? 'is-fixed' : ''}`}
         onClick={onClick} 
         style={{ cursor: onClick ? 'pointer' : 'default' }}
       >
@@ -102,7 +96,7 @@ const WaitlistBanner = ({ onClick }) => {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
