@@ -66,14 +66,26 @@ const WaitlistBanner = ({ onClick }) => {
 
   // Handle sticky behavior - banner sticks when it reaches the header
   useEffect(() => {
+    let ticking = false;
+    
     const handleScroll = () => {
-      if (placeholderRef.current) {
-        const headerHeight = window.innerWidth <= 768 ? 56 : 72;
-        const placeholderRect = placeholderRef.current.getBoundingClientRect();
-        
-        // Banner becomes sticky when its placeholder reaches the header
-        const shouldStick = placeholderRect.top <= headerHeight;
-        setIsSticky(shouldStick);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          if (placeholderRef.current) {
+            const headerHeight = window.innerWidth <= 768 ? 56 : 72;
+            const placeholderRect = placeholderRef.current.getBoundingClientRect();
+            
+            // Banner becomes sticky when its placeholder reaches the header
+            const shouldStick = placeholderRect.top <= headerHeight;
+            
+            // Only update if state actually changed
+            if (shouldStick !== isSticky) {
+              setIsSticky(shouldStick);
+            }
+          }
+          ticking = false;
+        });
+        ticking = true;
       }
     };
 
@@ -81,7 +93,7 @@ const WaitlistBanner = ({ onClick }) => {
     handleScroll(); // Check initial state
     
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [isSticky]);
 
   const formatTime = (num) => String(num).padStart(2, '0');
 
