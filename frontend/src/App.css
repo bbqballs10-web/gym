@@ -10114,6 +10114,9 @@ body {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
+  /* Ensure no transform affects sticky */
+  transform: none !important;
+  animation: none !important;
 }
 
 .waitlist-banner:hover {
