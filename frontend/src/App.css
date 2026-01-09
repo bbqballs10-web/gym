@@ -901,8 +901,8 @@ body {
 /* DESKTOP: 2-column grid, full viewport height */
 @media (min-width: 1024px) {
   .hero-section {
-    min-height: calc(100vh - 72px); /* Full viewport minus header */
-    height: auto; /* Allow content to determine height on smaller screens */
+    min-height: calc(100vh - 72px); /* At least full viewport minus header */
+    height: auto; /* Allow content to expand if needed */
     padding-bottom: 40px;
   }
   
@@ -911,14 +911,6 @@ body {
     grid-template-columns: 1fr 1fr;
     align-items: center;
     gap: clamp(32px, 4vw, 96px);
-  }
-}
-
-/* Larger desktop screens - lock to viewport */
-@media (min-width: 1024px) and (min-height: 800px) {
-  .hero-section {
-    height: calc(100vh - 72px);
-    padding-bottom: 0;
   }
 }
 
