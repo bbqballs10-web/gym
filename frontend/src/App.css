@@ -9291,14 +9291,14 @@ body {
   animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) both;
 }
 
-/* Exclude collection-section from animation to preserve fixed positioning of child elements */
+/* Exclude collection-section from animation to preserve sticky positioning */
 .landing-content > .collection-section {
   animation: none;
   transform: none !important;
 }
 
-/* Exclude waitlist-banner-container from animation to preserve fixed positioning */
-.landing-content > .waitlist-banner-container {
+/* Exclude waitlist-banner from animation to preserve sticky positioning */
+.landing-content > .waitlist-banner {
   animation: none;
   transform: none !important;
 }
