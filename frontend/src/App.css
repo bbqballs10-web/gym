@@ -9297,8 +9297,8 @@ body {
   transform: none !important;
 }
 
-/* Exclude waitlist-banner-wrapper from animation to preserve fixed positioning */
-.landing-content > .waitlist-banner-wrapper {
+/* Exclude waitlist-banner from animation to preserve positioning */
+.landing-content > .waitlist-banner-inline {
   animation: none;
   transform: none !important;
 }
