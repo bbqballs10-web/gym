@@ -3003,6 +3003,140 @@ async def admin_get_visitors(admin_token: str = Cookie(default=None)):
         "timestamp": datetime.now(timezone.utc).isoformat()
     }
 
+# ============================================
+# ABANDONED CART PROCESSING
+# ============================================
+
+class AbandonedCartCreate(BaseModel):
+    email: EmailStr
+    cart_items: List[Dict]
+    cart_total: float
+    user_id: Optional[str] = None
+
+@api_router.post("/cart/track-abandoned")
+async def track_abandoned_cart(cart_data: AbandonedCartCreate):
+    """Track an abandoned cart for email follow-up"""
+    try:
+        abandoned_cart = {
+            "id": str(uuid.uuid4()),
+            "email": cart_data.email.lower(),
+            "cart_items": cart_data.cart_items,
+            "cart_total": cart_data.cart_total,
+            "user_id": cart_data.user_id,
+            "created_at": datetime.now(timezone.utc),
+            "email_1_sent": False,
+            "email_2_sent": False,
+            "email_3_sent": False,
+            "recovered": False
+        }
+        
+        # Upsert - update if email exists, insert if not
+        await db.abandoned_carts.update_one(
+            {"email": cart_data.email.lower(), "recovered": False},
+            {"$set": abandoned_cart},
+            upsert=True
+        )
+        
+        return {"success": True, "message": "Abandoned cart tracked"}
+    except Exception as e:
+        logging.error(f"Error tracking abandoned cart: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/cart/process-abandoned")
+async def process_abandoned_carts():
+    """Process abandoned carts and send webhook notifications to n8n
+    This should be called by a cron job every 5 minutes"""
+    try:
+        now = datetime.now(timezone.utc)
+        results = {"email_1": 0, "email_2": 0, "email_3": 0}
+        
+        # Get all unrecovered abandoned carts
+        carts = await db.abandoned_carts.find({"recovered": False}).to_list(1000)
+        
+        async with httpx.AsyncClient() as client:
+            for cart in carts:
+                created_at = cart.get("created_at", now)
+                hours_since_abandoned = (now - created_at).total_seconds() / 3600
+                
+                # Email 1: After 1 hour
+                if hours_since_abandoned >= 1 and not cart.get("email_1_sent"):
+                    payload = {
+                        "email": cart["email"],
+                        "cart_items": cart["cart_items"],
+                        "cart_total": cart["cart_total"],
+                        "email_sequence": 1,
+                        "timestamp": now.isoformat()
+                    }
+                    try:
+                        await client.post(WEBHOOK_ABANDONED_CART_1, json=payload, timeout=10.0)
+                        await db.abandoned_carts.update_one(
+                            {"id": cart["id"]},
+                            {"$set": {"email_1_sent": True, "email_1_sent_at": now}}
+                        )
+                        results["email_1"] += 1
+                    except Exception as e:
+                        logging.error(f"Failed to send abandoned cart email 1 for {cart['email']}: {e}")
+                
+                # Email 2: After 24 hours
+                elif hours_since_abandoned >= 24 and cart.get("email_1_sent") and not cart.get("email_2_sent"):
+                    payload = {
+                        "email": cart["email"],
+                        "cart_items": cart["cart_items"],
+                        "cart_total": cart["cart_total"],
+                        "email_sequence": 2,
+                        "timestamp": now.isoformat()
+                    }
+                    try:
+                        await client.post(WEBHOOK_ABANDONED_CART_2, json=payload, timeout=10.0)
+                        await db.abandoned_carts.update_one(
+                            {"id": cart["id"]},
+                            {"$set": {"email_2_sent": True, "email_2_sent_at": now}}
+                        )
+                        results["email_2"] += 1
+                    except Exception as e:
+                        logging.error(f"Failed to send abandoned cart email 2 for {cart['email']}: {e}")
+                
+                # Email 3: After 72 hours (3 days)
+                elif hours_since_abandoned >= 72 and cart.get("email_2_sent") and not cart.get("email_3_sent"):
+                    payload = {
+                        "email": cart["email"],
+                        "cart_items": cart["cart_items"],
+                        "cart_total": cart["cart_total"],
+                        "email_sequence": 3,
+                        "timestamp": now.isoformat()
+                    }
+                    try:
+                        await client.post(WEBHOOK_ABANDONED_CART_3, json=payload, timeout=10.0)
+                        await db.abandoned_carts.update_one(
+                            {"id": cart["id"]},
+                            {"$set": {"email_3_sent": True, "email_3_sent_at": now}}
+                        )
+                        results["email_3"] += 1
+                    except Exception as e:
+                        logging.error(f"Failed to send abandoned cart email 3 for {cart['email']}: {e}")
+        
+        return {
+            "success": True,
+            "processed": results,
+            "timestamp": now.isoformat()
+        }
+    except Exception as e:
+        logging.error(f"Error processing abandoned carts: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/cart/mark-recovered")
+async def mark_cart_recovered(email: str):
+    """Mark an abandoned cart as recovered (called after successful checkout)"""
+    try:
+        await db.abandoned_carts.update_many(
+            {"email": email.lower(), "recovered": False},
+            {"$set": {"recovered": True, "recovered_at": datetime.now(timezone.utc)}}
+        )
+        return {"success": True, "message": "Cart marked as recovered"}
+    except Exception as e:
+        logging.error(f"Error marking cart recovered: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 # Include the router in the main app (MUST be after all routes are defined)
 app.include_router(api_router)
 
