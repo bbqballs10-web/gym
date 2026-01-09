@@ -1,0 +1,76 @@
+/* ===================================
+   FLUID + BREAKPOINTS SYSTEM
+   
+   Golden References:
+   - Mobile: iPhone 17 Pro Max (430px)
+   - Desktop: PRISM+ X270 27" (2560px)
+   
+   Breakpoints:
+   - Mobile: < 768px (stacked layouts)
+   - Tablet: 768px - 1023px (transitional)
+   - Desktop: >= 1024px (2-column layouts)
+   - Large Desktop: >= 1440px (full experience)
+   - Max Container: 1500px (prevents ultra-stretch)
+   
+   Key Rules:
+   - Min text: 12px (accessibility)
+   - Max container: 1500px
+   - Touch targets: 44px min on mobile
+   - Fluid values via clamp()
+   =================================== */
+
+/* No zoom - pure fluid scaling */
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  zoom: 1;
+  transform: none;
+}
+
+/* ===================================
+   FLUID SPACING TOKENS
+   =================================== */
+:root {
+  /* Spacing - scales with viewport */
+  --space-xs: clamp(4px, 1vw, 8px);
+  --space-sm: clamp(8px, 2vw, 16px);
+  --space-md: clamp(16px, 3vw, 32px);
+  --space-lg: clamp(24px, 4vw, 48px);
+  --space-xl: clamp(32px, 5vw, 64px);
+  --space-2xl: clamp(48px, 6vw, 96px);
+  
+  /* Container */
+  --container-max: 1500px;
+  --container-padding: clamp(16px, 4vw, 80px);
+  
+  /* Typography - min ensures readability */
+  --text-xs: clamp(10px, 2.5vw, 12px);
+  --text-sm: clamp(12px, 3vw, 14px);
+  --text-base: clamp(14px, 3.5vw, 16px);
+  --text-lg: clamp(16px, 4vw, 20px);
+  --text-xl: clamp(18px, 4.5vw, 24px);
+  --text-2xl: clamp(24px, 5vw, 32px);
+  --text-3xl: clamp(32px, 6vw, 48px);
+  --text-4xl: clamp(40px, 8vw, 64px);
+  --text-hero: clamp(48px, 10vw, 120px);
+}
+
+/* ===================================
+   CONTAINER SYSTEM
+   =================================== */
+.container {
+  width: 100%;
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding-inline: var(--container-padding);
+}
+
+/* Full-width on mobile, contained on desktop */
+@media (max-width: 767px) {
+  .container {
+    padding-inline: 16px;
+  }
+}

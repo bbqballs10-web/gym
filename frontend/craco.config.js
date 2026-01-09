@@ -61,6 +61,14 @@ const webpackConfig = {
         ],
       };
 
+      // Disable CSS minification to avoid "/" character issues in production builds
+      // This is a workaround for CSS Minimizer Plugin failing on grid-column and aspect-ratio values
+      if (process.env.NODE_ENV === 'production') {
+        webpackConfig.optimization.minimizer = webpackConfig.optimization.minimizer.filter(
+          plugin => plugin.constructor.name !== 'CssMinimizerPlugin'
+        );
+      }
+
       // Add health check plugin to webpack if enabled
       if (config.enableHealthCheck && healthPluginInstance) {
         webpackConfig.plugins.push(healthPluginInstance);
