@@ -68,7 +68,11 @@ const WaitlistBanner = ({ onClick }) => {
     const handleScroll = () => {
       if (!ticking) {
         requestAnimationFrame(() => {
-          checkSticky();
+          // Access ref directly instead of through closure
+          if (stickyPointRef.current !== null) {
+            const shouldStick = window.scrollY >= stickyPointRef.current;
+            setIsSticky(shouldStick);
+          }
           ticking = false;
         });
         ticking = true;
@@ -76,6 +80,8 @@ const WaitlistBanner = ({ onClick }) => {
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
+    // Initial check
+    handleScroll();
     
     return () => window.removeEventListener('scroll', handleScroll);
   }, [isVisible]);
