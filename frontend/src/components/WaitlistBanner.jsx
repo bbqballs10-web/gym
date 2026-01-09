@@ -8,23 +8,33 @@ const WaitlistBanner = ({ onClick }) => {
   const [isSticky, setIsSticky] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const [bannerHeight, setBannerHeight] = useState(0);
+  const [stickyThreshold, setStickyThreshold] = useState(0);
   const bannerRef = useRef(null);
   const wrapperRef = useRef(null);
 
   // Next drop date - February 2, 2026
   const targetDate = new Date('2026-02-02T00:00:00');
 
-  // Measure banner height on mount and resize
+  // Calculate the sticky threshold (wrapper's distance from top of document)
   useEffect(() => {
-    const updateHeight = () => {
-      if (bannerRef.current) {
-        setBannerHeight(bannerRef.current.offsetHeight);
+    const calculateThreshold = () => {
+      if (wrapperRef.current && isVisible) {
+        const headerHeight = window.innerWidth <= 768 ? 56 : 72;
+        // Get the wrapper's position from top of document
+        const wrapperTop = wrapperRef.current.getBoundingClientRect().top + window.scrollY;
+        setStickyThreshold(wrapperTop - headerHeight);
+        setBannerHeight(bannerRef.current?.offsetHeight || 48);
       }
     };
     
-    updateHeight();
-    window.addEventListener('resize', updateHeight);
-    return () => window.removeEventListener('resize', updateHeight);
+    // Small delay to ensure DOM is ready
+    const timer = setTimeout(calculateThreshold, 100);
+    window.addEventListener('resize', calculateThreshold);
+    
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('resize', calculateThreshold);
+    };
   }, [isVisible]);
 
   // Show banner after first touch or scroll
@@ -74,16 +84,14 @@ const WaitlistBanner = ({ onClick }) => {
     };
   }, []);
 
-  // Handle sticky with proper RAF debouncing
+  // Handle sticky based on scroll position vs threshold
   const handleScroll = useCallback(() => {
-    if (!wrapperRef.current) return;
+    if (stickyThreshold === 0) return;
     
-    const headerHeight = window.innerWidth <= 768 ? 56 : 72;
-    const wrapperRect = wrapperRef.current.getBoundingClientRect();
-    const shouldStick = wrapperRect.top <= headerHeight;
-    
+    // Simple check: if we've scrolled past the threshold, stick
+    const shouldStick = window.scrollY >= stickyThreshold;
     setIsSticky(shouldStick);
-  }, []);
+  }, [stickyThreshold]);
 
   useEffect(() => {
     let rafId = null;
@@ -114,7 +122,7 @@ const WaitlistBanner = ({ onClick }) => {
       ref={wrapperRef}
       className="waitlist-banner-wrapper"
       style={{ 
-        // When sticky, the wrapper maintains the space
+        // When sticky, the wrapper maintains the space to prevent layout jump
         minHeight: isSticky ? bannerHeight : 'auto'
       }}
     >
