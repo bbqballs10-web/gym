@@ -1125,8 +1125,8 @@ body {
 /* DESKTOP: larger hero shirt */
 @media (min-width: 1024px) {
   .hero-image-container .hero-shirt-single {
-    width: 65%;
-    max-width: 320px;
+    width: 85%;
+    max-width: 450px;
   }
 }
 
