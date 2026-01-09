@@ -10343,12 +10343,7 @@ body {
 
 @media (max-width: 768px) {
   .waitlist-banner-placeholder {
-    height: 0;
-    transition: height 0.2s ease;
-  }
-  
-  .waitlist-banner-placeholder.active {
-    height: 40px;
+    transition: height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .waitlist-banner {
