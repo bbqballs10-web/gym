@@ -9,8 +9,7 @@ const WaitlistBanner = ({ onClick }) => {
   const [isVisible, setIsVisible] = useState(false);
   const [bannerHeight, setBannerHeight] = useState(48);
   const bannerRef = useRef(null);
-  const wrapperRef = useRef(null);
-  const initialOffsetRef = useRef(null);
+  const sentinelRef = useRef(null); // Invisible element to detect when banner should stick
 
   // Next drop date - February 2, 2026
   const targetDate = new Date('2026-02-02T00:00:00');
@@ -32,20 +31,35 @@ const WaitlistBanner = ({ onClick }) => {
     };
   }, []);
 
-  // Measure banner height and initial offset once visible
+  // Measure banner height
   useEffect(() => {
-    if (isVisible && wrapperRef.current && bannerRef.current) {
-      // Wait a frame for render
-      requestAnimationFrame(() => {
-        if (bannerRef.current) {
-          setBannerHeight(bannerRef.current.offsetHeight);
-        }
-        if (wrapperRef.current && initialOffsetRef.current === null) {
-          // Store the initial offset from top of document (only once)
-          initialOffsetRef.current = wrapperRef.current.offsetTop;
-        }
-      });
+    if (isVisible && bannerRef.current) {
+      setBannerHeight(bannerRef.current.offsetHeight);
     }
+  }, [isVisible]);
+
+  // Use IntersectionObserver for sticky detection
+  useEffect(() => {
+    if (!isVisible || !sentinelRef.current) return;
+
+    const headerHeight = window.innerWidth <= 768 ? 56 : 72;
+    
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        // When sentinel is NOT intersecting (scrolled past), banner should be sticky
+        setIsSticky(!entry.isIntersecting);
+      },
+      {
+        // Root margin: negative top margin equal to header height
+        // This triggers when sentinel reaches the bottom of the header
+        rootMargin: `-${headerHeight}px 0px 0px 0px`,
+        threshold: 0
+      }
+    );
+
+    observer.observe(sentinelRef.current);
+
+    return () => observer.disconnect();
   }, [isVisible]);
 
   useEffect(() => {
@@ -78,56 +92,21 @@ const WaitlistBanner = ({ onClick }) => {
     };
   }, []);
 
-  // Handle sticky - simple scroll position check
-  useEffect(() => {
-    let rafId = null;
-    
-    const handleScroll = () => {
-      if (rafId) return;
-      
-      rafId = requestAnimationFrame(() => {
-        const headerHeight = window.innerWidth <= 768 ? 56 : 72;
-        
-        // If we haven't captured the initial offset yet, try now
-        if (initialOffsetRef.current === null && wrapperRef.current) {
-          // Get current scroll + wrapper's visual position to find document offset
-          const rect = wrapperRef.current.getBoundingClientRect();
-          initialOffsetRef.current = rect.top + window.scrollY;
-        }
-        
-        if (initialOffsetRef.current !== null) {
-          // Banner should stick when scroll position puts the banner at header level
-          const stickyPoint = initialOffsetRef.current - headerHeight;
-          const shouldStick = window.scrollY >= stickyPoint;
-          setIsSticky(shouldStick);
-        }
-        
-        rafId = null;
-      });
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    // Check initial state
-    handleScroll();
-    
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      if (rafId) cancelAnimationFrame(rafId);
-    };
-  }, []);
-
   const formatTime = (num) => String(num).padStart(2, '0');
 
   if (!isVisible) return null;
 
   return (
-    <div 
-      ref={wrapperRef}
-      className="waitlist-banner-wrapper"
-      style={{ 
-        minHeight: isSticky ? bannerHeight : 'auto'
-      }}
-    >
+    <div className="waitlist-banner-container">
+      {/* Sentinel element - when this scrolls past header, banner becomes sticky */}
+      <div ref={sentinelRef} className="waitlist-sentinel" />
+      
+      {/* Placeholder maintains space when banner is fixed */}
+      <div 
+        className="waitlist-banner-placeholder"
+        style={{ height: isSticky ? bannerHeight : 0 }}
+      />
+      
       <div 
         ref={bannerRef}
         className={`waitlist-banner ${isSticky ? 'is-sticky' : ''}`}
