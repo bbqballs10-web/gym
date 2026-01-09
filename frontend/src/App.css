@@ -10117,6 +10117,14 @@ body {
   -webkit-backdrop-filter: blur(12px);
 }
 
+.waitlist-banner.is-fixed {
+  position: fixed;
+  top: 72px;
+  left: 0;
+  right: 0;
+  margin-top: 0;
+}
+
 .waitlist-banner:hover {
   background: linear-gradient(90deg, rgba(0, 217, 255, 0.12) 0%, rgba(168, 85, 247, 0.08) 50%, rgba(0, 217, 255, 0.12) 100%);
   box-shadow: 0 6px 32px rgba(0, 217, 255, 0.2);
