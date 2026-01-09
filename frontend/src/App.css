@@ -10121,6 +10121,25 @@ body {
   visibility: hidden;
 }
 
+/* Initially hidden until first interaction */
+.waitlist-banner-inline.initially-hidden {
+  opacity: 0;
+}
+
+/* Fade in animation */
+.waitlist-banner-inline.fade-in {
+  animation: bannerFadeIn 0.5s ease-out forwards;
+}
+
+@keyframes bannerFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 /* Fixed banner - always at top when visible */
 .waitlist-banner-fixed {
   position: fixed;
