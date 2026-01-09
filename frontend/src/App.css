@@ -10364,6 +10364,7 @@ body {
     top: 56px;
     left: 0;
     right: 0;
+    animation: slideInBanner 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
   
   .banner-content {
