@@ -106,7 +106,10 @@ const WaitlistBanner = ({ onClick }) => {
       <div 
         ref={placeholderRef} 
         className="waitlist-banner-placeholder"
-        style={{ height: isSticky ? '44px' : '0px' }}
+        style={{ 
+          height: isSticky ? (bannerRef.current?.offsetHeight || 48) + 'px' : '0px',
+          transition: 'height 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+        }}
       />
       
       <div 
