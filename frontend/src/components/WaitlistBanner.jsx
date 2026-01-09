@@ -9,7 +9,8 @@ const WaitlistBanner = ({ onClick }) => {
   const [isVisible, setIsVisible] = useState(false);
   const [bannerHeight, setBannerHeight] = useState(48);
   const bannerRef = useRef(null);
-  const sentinelRef = useRef(null); // Invisible element to detect when banner should stick
+  const containerRef = useRef(null);
+  const stickyPointRef = useRef(null); // Store the scroll position where banner should stick
 
   // Next drop date - February 2, 2026
   const targetDate = new Date('2026-02-02T00:00:00');
@@ -31,35 +32,52 @@ const WaitlistBanner = ({ onClick }) => {
     };
   }, []);
 
-  // Measure banner height
+  // Calculate sticky point after banner becomes visible
   useEffect(() => {
-    if (isVisible && bannerRef.current) {
-      setBannerHeight(bannerRef.current.offsetHeight);
-    }
+    if (!isVisible || !containerRef.current || stickyPointRef.current !== null) return;
+    
+    // Wait for render
+    const timer = setTimeout(() => {
+      if (containerRef.current && bannerRef.current) {
+        const headerHeight = window.innerWidth <= 768 ? 56 : 72;
+        const containerTop = containerRef.current.getBoundingClientRect().top + window.scrollY;
+        stickyPointRef.current = containerTop - headerHeight;
+        setBannerHeight(bannerRef.current.offsetHeight);
+        
+        // Trigger initial check
+        checkSticky();
+      }
+    }, 200);
+    
+    return () => clearTimeout(timer);
   }, [isVisible]);
 
-  // Use IntersectionObserver for sticky detection
+  // Check sticky state
+  const checkSticky = () => {
+    if (stickyPointRef.current === null) return;
+    const shouldStick = window.scrollY >= stickyPointRef.current;
+    setIsSticky(shouldStick);
+  };
+
+  // Scroll handler
   useEffect(() => {
-    if (!isVisible || !sentinelRef.current) return;
-
-    const headerHeight = window.innerWidth <= 768 ? 56 : 72;
+    if (!isVisible) return;
     
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        // When sentinel is NOT intersecting (scrolled past), banner should be sticky
-        setIsSticky(!entry.isIntersecting);
-      },
-      {
-        // Root margin: negative top margin equal to header height
-        // This triggers when sentinel reaches the bottom of the header
-        rootMargin: `-${headerHeight}px 0px 0px 0px`,
-        threshold: 0
+    let ticking = false;
+    
+    const handleScroll = () => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          checkSticky();
+          ticking = false;
+        });
+        ticking = true;
       }
-    );
+    };
 
-    observer.observe(sentinelRef.current);
-
-    return () => observer.disconnect();
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    
+    return () => window.removeEventListener('scroll', handleScroll);
   }, [isVisible]);
 
   useEffect(() => {
@@ -97,10 +115,7 @@ const WaitlistBanner = ({ onClick }) => {
   if (!isVisible) return null;
 
   return (
-    <div className="waitlist-banner-container">
-      {/* Sentinel element - when this scrolls past header, banner becomes sticky */}
-      <div ref={sentinelRef} className="waitlist-sentinel" />
-      
+    <div ref={containerRef} className="waitlist-banner-container">
       {/* Placeholder maintains space when banner is fixed */}
       <div 
         className="waitlist-banner-placeholder"
