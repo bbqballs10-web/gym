@@ -1,14 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Flame, Clock, Users } from 'lucide-react';
 import { calculateSpotsRemaining } from '../utils/waitlistSpots';
 
 const WaitlistBanner = ({ onClick }) => {
   const [spotsRemaining, setSpotsRemaining] = useState(null);
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
-  const [isSticky, setIsSticky] = useState(false);
   const [isVisible, setIsVisible] = useState(false); // Hidden until first interaction
-  const bannerRef = useRef(null);
-  const placeholderRef = useRef(null);
 
   // Next drop date - February 2, 2026
   const targetDate = new Date('2026-02-02T00:00:00');
@@ -64,60 +61,18 @@ const WaitlistBanner = ({ onClick }) => {
     };
   }, []);
 
-  // Handle sticky behavior - banner sticks when it reaches the header
-  useEffect(() => {
-    let ticking = false;
-    
-    const handleScroll = () => {
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          if (placeholderRef.current) {
-            const headerHeight = window.innerWidth <= 768 ? 56 : 72;
-            const placeholderRect = placeholderRef.current.getBoundingClientRect();
-            
-            // Banner becomes sticky when its placeholder reaches the header
-            const shouldStick = placeholderRect.top <= headerHeight;
-            
-            // Only update if state actually changed
-            if (shouldStick !== isSticky) {
-              setIsSticky(shouldStick);
-            }
-          }
-          ticking = false;
-        });
-        ticking = true;
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll(); // Check initial state
-    
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [isSticky]);
-
   const formatTime = (num) => String(num).padStart(2, '0');
 
   // Don't render until first interaction
   if (!isVisible) return null;
 
   return (
-    <>
-      {/* Placeholder to maintain layout space when banner is sticky */}
-      <div 
-        ref={placeholderRef} 
-        className="waitlist-banner-placeholder"
-        style={{ 
-          height: isSticky ? (bannerRef.current?.offsetHeight || 48) + 'px' : '0px',
-          transition: 'height 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
-        }}
-      />
-      
-      <div 
-        ref={bannerRef}
-        className={`waitlist-banner ${isSticky ? 'is-sticky' : ''}`} 
-        onClick={onClick} 
-        style={{ cursor: onClick ? 'pointer' : 'default' }}
-      >
+    <div 
+      className="waitlist-banner-wrapper"
+      onClick={onClick} 
+      style={{ cursor: onClick ? 'pointer' : 'default' }}
+    >
+      <div className="waitlist-banner">
         <div className="banner-content">
           <div className="banner-left">
             <Flame size={20} className="banner-icon" />
@@ -139,7 +94,7 @@ const WaitlistBanner = ({ onClick }) => {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
