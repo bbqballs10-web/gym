@@ -67,9 +67,7 @@ const Home = () => {
       <Header />
       <main className="landing-content">
         <Hero onEarlyAccessClick={handleEarlyAccessClick} />
-      </main>
-      <WaitlistBanner onClick={handleEarlyAccessClick} />
-      <main className="landing-content">
+        <WaitlistBanner onClick={handleEarlyAccessClick} />
         <ProductCategories />
         <TrustBar />
         <AnnouncementBar />
