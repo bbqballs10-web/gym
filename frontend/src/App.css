@@ -1134,6 +1134,13 @@ body {
 @media (min-width: 1024px) {
   .hero-image-container .hero-shirt-single {
     width: 100%;
+    max-width: 420px;
+  }
+}
+
+/* Larger desktop with tall viewport - bigger shirt */
+@media (min-width: 1024px) and (min-height: 800px) {
+  .hero-image-container .hero-shirt-single {
     max-width: 550px;
   }
 }
