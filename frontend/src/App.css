@@ -10134,6 +10134,18 @@ body {
   background: linear-gradient(90deg, rgba(0, 217, 255, 0.15) 0%, rgba(168, 85, 247, 0.12) 50%, rgba(0, 217, 255, 0.15) 100%);
   box-shadow: 0 4px 20px rgba(0, 217, 255, 0.2), 0 2px 8px rgba(0, 0, 0, 0.4);
   border-bottom: 1px solid rgba(0, 217, 255, 0.5);
+  animation: slideInBanner 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slideInBanner {
+  from {
+    opacity: 0.8;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .banner-content {
