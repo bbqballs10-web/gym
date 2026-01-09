@@ -46,7 +46,7 @@ const GiveawayPopup = () => {
     // Check if should show based on 14-day cooldown
     if (!giveawayPopup.shouldShow()) return;
 
-    // Show after EXACTLY 7 seconds
+    // Show after 5 seconds
     const timer = setTimeout(() => {
       setIsOpen(true);
       setTimeLeft(30); // Reset timer
