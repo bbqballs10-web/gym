@@ -10102,17 +10102,28 @@ body {
 /* ========================================
    WAITLIST BANNER
    ======================================== */
+.waitlist-banner-wrapper {
+  position: relative;
+  margin-top: -40px;
+  height: 48px; /* Fixed height to prevent layout shift */
+}
+
+.waitlist-sentinel {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+}
+
 .waitlist-banner {
   background: linear-gradient(90deg, rgba(0, 217, 255, 0.08) 0%, rgba(168, 85, 247, 0.06) 50%, rgba(0, 217, 255, 0.08) 100%);
   border-top: 1px solid rgba(0, 217, 255, 0.3);
   border-bottom: 1px solid rgba(0, 217, 255, 0.4);
   padding: 12px 20px;
-  position: sticky;
-  top: 72px;
   z-index: 998;
   box-shadow: 0 4px 24px rgba(0, 217, 255, 0.1);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  margin-top: -40px;
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
 }
@@ -10122,7 +10133,6 @@ body {
   top: 72px;
   left: 0;
   right: 0;
-  margin-top: 0;
 }
 
 .waitlist-banner:hover {
