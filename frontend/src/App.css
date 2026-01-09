@@ -10102,21 +10102,8 @@ body {
 /* ========================================
    WAITLIST BANNER
    ======================================== */
-.waitlist-banner-wrapper {
-  position: relative;
-  margin-top: -40px;
-  height: 48px; /* Fixed height to prevent layout shift */
-}
 
-.waitlist-sentinel {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 1px;
-  height: 1px;
-  pointer-events: none;
-}
-
+/* Base banner styles */
 .waitlist-banner {
   background: linear-gradient(90deg, rgba(0, 217, 255, 0.08) 0%, rgba(168, 85, 247, 0.06) 50%, rgba(0, 217, 255, 0.08) 100%);
   border-top: 1px solid rgba(0, 217, 255, 0.3);
@@ -10128,11 +10115,31 @@ body {
   -webkit-backdrop-filter: blur(12px);
 }
 
-.waitlist-banner.is-fixed {
+/* Inline banner - stays in document flow */
+.waitlist-banner-inline {
+  margin-top: -40px;
+  position: relative;
+}
+
+.waitlist-banner-inline.is-hidden {
+  visibility: hidden;
+}
+
+/* Fixed banner - always at top when visible */
+.waitlist-banner-fixed {
   position: fixed;
   top: 72px;
   left: 0;
   right: 0;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.waitlist-banner-fixed.is-visible {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
 }
 
 .waitlist-banner:hover {
