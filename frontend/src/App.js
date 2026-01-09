@@ -65,9 +65,9 @@ const Home = () => {
   return (
     <div className="landing-page">
       <Header />
+      <WaitlistBanner onClick={handleEarlyAccessClick} />
       <main className="landing-content">
         <Hero onEarlyAccessClick={handleEarlyAccessClick} />
-        <WaitlistBanner onClick={handleEarlyAccessClick} />
         <ProductCategories />
         <TrustBar />
         <AnnouncementBar />
