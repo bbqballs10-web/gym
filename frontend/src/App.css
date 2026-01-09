@@ -1111,8 +1111,8 @@ body {
 
 /* Hero shirt image - fluid sizing with edge glow */
 .hero-image-container .hero-shirt-single {
-  width: 85%;
-  max-width: 280px;
+  width: 70%;
+  max-width: 220px;
   height: auto;
   max-height: 100%;
   object-fit: contain;
@@ -1125,8 +1125,8 @@ body {
 /* DESKTOP: larger hero shirt */
 @media (min-width: 1024px) {
   .hero-image-container .hero-shirt-single {
-    width: 85%;
-    max-width: 450px;
+    width: 70%;
+    max-width: 350px;
   }
 }
 
