@@ -10094,15 +10094,14 @@ body {
 }
 
 /* ========================================
-   WAITLIST BANNER - Native Sticky (No Jump)
+   WAITLIST BANNER - Smooth Sticky
    ======================================== */
 
-/* Wrapper uses position: sticky for smooth transition */
+/* Wrapper maintains space when banner is fixed */
 .waitlist-banner-wrapper {
-  position: sticky;
-  top: 72px; /* Header height on desktop */
-  z-index: 998;
+  position: relative;
   width: 100%;
+  z-index: 998;
 }
 
 .waitlist-banner {
@@ -10119,6 +10118,18 @@ body {
 .waitlist-banner:hover {
   background: linear-gradient(90deg, rgba(0, 217, 255, 0.12) 0%, rgba(168, 85, 247, 0.08) 50%, rgba(0, 217, 255, 0.12) 100%);
   box-shadow: 0 6px 32px rgba(0, 217, 255, 0.2);
+}
+
+/* When sticky - fixed position below header */
+.waitlist-banner.is-sticky {
+  position: fixed;
+  top: 72px;
+  left: 0;
+  right: 0;
+  z-index: 998;
+  background: linear-gradient(90deg, rgba(0, 217, 255, 0.12) 0%, rgba(168, 85, 247, 0.08) 50%, rgba(0, 217, 255, 0.12) 100%);
+  box-shadow: 0 4px 20px rgba(0, 217, 255, 0.25), 0 2px 8px rgba(0, 0, 0, 0.4);
+  border-bottom: 1px solid rgba(0, 217, 255, 0.5);
 }
 
 .banner-content {
