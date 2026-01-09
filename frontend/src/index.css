@@ -8,6 +8,11 @@
 /* Viewport Proportional Scaling - scales existing designs uniformly */
 @import './viewport-scaling.css';
 
+/* Smooth scrolling behavior */
+html {
+    scroll-behavior: smooth;
+}
+
 /* RAZE Brand Theme Variables */
 :root {
     /* Dark theme colors for RAZE */
